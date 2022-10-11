@@ -17,21 +17,21 @@ function open_excel_file_by_ext(string $xl_extension, $file_path)
     return $spreadsheet;
 }
 
-function get_file_list($repertory)
+function get_file_list($directory)
 {
-    if (!is_dir($repertory)) return false;
+    if (!is_dir($directory)) return false;
 
-    $scan_rep= scandir($repertory);
+    $scan_rep= scandir($directory);
     $result["file_info"]=array();
     $result["years"]=array();
 
 
     foreach($scan_rep as $file)
     {
-        if (!is_file($repertory."/".$file)) continue;
+        if (!is_file($directory."/".$file)) continue;
 
-        $created_year = date("Y", filectime($repertory."/".$file));
-        $created_month = date("m", filectime($repertory."/".$file));
+        $created_year = date("Y", filectime($directory."/".$file));
+        $created_month = date("m", filectime($directory."/".$file));
         $result["file_info"][$file]= array(
             "created_year" =>$created_year,
             "created_month" =>$created_month,
@@ -41,5 +41,42 @@ function get_file_list($repertory)
     }
 
     return $result;
+}
+
+function search_expression_in_all_files(string $expression, $directory )
+{
+        // prepare pattern for preg_match search
+    $pattern="~".$expression."~";
+
+    if (!is_dir($directory)) return false;
+
+    $scan_rep= scandir($directory);
+
+    foreach($scan_rep as $file)
+    {
+        
+        if (!is_file($directory."/".$file)) continue;
+
+
+
+            // open file in read only mode
+        $ressource = fopen($directory."/".$file,"r");
+
+
+            // read the content of the file lines by lines
+        $content=fgets($ressource);
+        while($content)
+        {
+                // if the expression is in the line -> we return true and stop the function
+            if (preg_match($pattern,$content)) return true;
+
+            // read next line
+            $content=fgets($ressource);
+        }
+            // once finished close the ressource / file
+        fclose($ressource);
+    }
+
+    return false;
 }
 

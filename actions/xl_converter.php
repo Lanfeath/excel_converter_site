@@ -157,7 +157,13 @@ if(($_FILES)===array())
         $cellValueC = $dl_spreadsheet->getActiveSheet()->getCell('C'.$i)->getValue();
         $cellValueG = $dl_spreadsheet->getActiveSheet()->getCell('G'.$i)->getValue();
 
-
+        // if the line is already registered in one of the file -> we don't copy it and pass to the next      
+        if(search_expression_in_all_files($cellValueC, "../gfi_final_csv")) 
+        {
+            $i+=1;
+            $is_not_empty= ($dl_spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue()) !== Null;
+            continue;
+        }
         // remove either the comma or the point from the value got
         $cellValueG= intval(str_replace(array(".",","),"",strval($cellValueG)));
 
@@ -175,8 +181,17 @@ if(($_FILES)===array())
         $is_not_empty= ($dl_spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue()) !== Null;
     }
 
+        // If no line has been written as all the lines were already inserted in a previous GFI: error
+    if($final_spreadsheet->getActiveSheet()->getCell('C2')->getValue() === null) 
+    {
+        $_SESSION["error"]["msg"]= "Toutes les commandes ont déjà été traitées.";
+        $_SESSION["error"]["file_name"]=$_FILES['fichier_gfi']['name'];
+        header("Location: ../excel_site.php");
+        exit;
+    }
+
     // save the temp file in xlsx format
-    $writer->save('E:\xampp\htdocs\php_learning\excel_converter_site\excel_files\temp_GFI-final.xlsx');
+    $writer->save('../gfi_final_csv/temp_GFI-final.xlsx');
 
     // write the file in .csv and add some specifications about the separator wanted
 
@@ -191,19 +206,14 @@ if(($_FILES)===array())
     \PhpOffice\PhpSpreadsheet\Shared\StringHelper::setThousandsSeparator(" ' ");
     
     $file_name="GFI_Final_".date("YmdHis").".csv";
-    $dir_name= ('E:/xampp/htdocs/php_learning/excel_converter_site/gfi_final_csv/');
+    $dir_name= ('../gfi_final_csv/');
 
     $writer->save($dir_name. $file_name);
 
+        // Delete unnecessary files from server
+    unlink("../gfi_final_csv/temp_GFI-final.xlsx");
+
 /* ****************** END OF Convert file excel to GIF Final.csv ****************** */
-
-
-/* ######### Delete unnecessary files from server ########### */
-
-/* ****************** END OF Delete unnecessary files from server ****************** */
-
-
-echo "finished on " . date("d-m-Y - H:i:s");
 
     // shows to page excel_site.php that we have 1 file ready to be downloaded
 $_SESSION["dl_file"]=true;

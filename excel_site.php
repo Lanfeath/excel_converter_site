@@ -92,7 +92,7 @@ session_destroy();
                 echo '
                     <div class="item">
                         <h2>Téléchargez un fichier précédent</h2>
-                        <form method="post" action="excel_site.php">
+                        <form method="post" action="./actions/download.php">
                             <div>
                                 <select name="file_dl">
                                 <optgroup label="Récent">
@@ -134,30 +134,6 @@ session_destroy();
                         </form>
                     </div>
                 ';
-
-                if(isset($_POST['file_dl']))
-                {
-                    //Read the filename
-                    $filename = $_POST['file_dl'];
-                    //Check the file exists or not
-                    if(file_exists("./gfi_final_csv/".$filename)) 
-                    {
-                        //Clear system output buffer
-                        flush();
-
-                        //Read the size of the file
-                        readfile("./gfi_final_csv/".$filename);
-
-                        //Terminate from the script
-                        die();
-                    }
-                    else{
-                        $_SESSION["error"]["file_name"]=$filename;
-                        $_SESSION["error"]["msg"]= "Le fichier sélectionné n'existe pas";
-                    }
-                }else{
-                    $_SESSION["error"]["msg"]= "Aucun fichier sélectionné";
-                }
 
                 ?>
 

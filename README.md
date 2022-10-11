@@ -1,6 +1,13 @@
 # excel_converter_site
 Create an excel converter site for GFI for the CREPS
 
+#Update 11.10.2022:
+Implemented the check in the "old" file to avoid load up lines already sent in previous files.
+Changed name of the file saved: from GFI_FINAL_"date of creation" to GFI_"year of GFI in file column ref"_cree_"date of creation".
+Changed selection mode: consider now the "year of GFI in column ref" to categorize.
+Add a condition / sentence if no files to download from historic.
+Change order of appearance in the list to download historic files from new to old
+
 #Update 09.10.2022:
 Set up upload of a file and various inspection of the file uploaded:
  - if a file is selected 

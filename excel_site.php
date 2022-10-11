@@ -92,6 +92,14 @@ session_destroy();
 
                 // On récupère la liste des fichiers du dossier GFI Final CSV:
                 $list_files= get_file_list("./gfi_final_csv");
+
+                $list_of_files=array_keys($list_files["file_info"]);
+                $list_year= array_values($list_files["years"]);
+
+                    // On trie les 2 listes par ordre décroissant pour afficher les derniers créés en derniers
+                rsort($list_year);
+                rsort($list_of_files);
+
                 $count_recent=(count($list_files["file_info"])>=4)?4:count($list_files["file_info"]);
                 
                     if($count_recent!==0)
@@ -107,7 +115,7 @@ session_destroy();
                                 for ($i=0; $i<$count_recent; $i++)
                                 {
                                     echo '
-                                    <option value ="'.array_keys($list_files["file_info"])[$i].'">'.array_keys($list_files["file_info"])[$i].'</option>';
+                                    <option value ="'.$list_of_files[$i].'">'.$list_of_files[$i].'</option>';
                                 }
                                 
                                 echo '</optgroup>';
@@ -115,11 +123,11 @@ session_destroy();
                                 for ($i=1; $i<=count($list_files["years"]); $i++)
                                 {
                                     echo '
-                                    <optgroup label="Année '.$list_files["years"][$i-1].'">';
+                                    <optgroup label="Année '.$list_year[$i-1].'">';
                                     
                                     foreach($list_files["file_info"] as $file_name => $file_value )
                                     {
-                                        if($file_value["file_year"] === $list_files["years"][$i-1] )
+                                        if($file_value["file_year"] === $list_year[$i-1] )
                                         {
                                             echo '
                                                 <option value="'.$file_name.'">'.$file_name.'</option>
@@ -143,7 +151,7 @@ session_destroy();
                     {
                         echo ' <p>Aucun fichier récent disponibles sur le serveur </p>';
                     }
-                    
+
                 echo'
                     </div>
                 ';

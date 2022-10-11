@@ -5,7 +5,7 @@ include_once "functions.php";
 
 /* ######### Initialisating the file needed ########### */
 
-    require 'E:\xampp\htdocs\php_learning\vendor\autoload.php';
+    require("../../vendor/autoload.php");
 
     use PhpOffice\PhpSpreadsheet\Spreadsheet;
     use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -218,6 +218,7 @@ if(($_FILES)===array())
     $writer->save($dir_name. $file_name);
 
         // Delete unnecessary files from server
+    unlink("$uploads_dir/$name");
     unlink("../gfi_final_csv/temp_GFI-final.xlsx");
 
 /* ****************** END OF Convert file excel to GIF Final.csv ****************** */

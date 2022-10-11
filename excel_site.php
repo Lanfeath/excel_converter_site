@@ -85,21 +85,26 @@ session_destroy();
                         </div>
                     ';
                 }
-
-                // On récupère la liste des fichiers du dossier GFI Final CSV:
-                $list_files= get_file_list("./gfi_final_csv");
-                
                 echo '
                     <div class="item">
                         <h2>Téléchargez un fichier précédent</h2>
+                    ';
+
+                // On récupère la liste des fichiers du dossier GFI Final CSV:
+                $list_files= get_file_list("./gfi_final_csv");
+                $count_recent=(count($list_files["file_info"])>=4)?4:count($list_files["file_info"]);
+                
+                    if($count_recent!==0)
+                    {
+                        echo '
                         <form method="post" action="./actions/download.php">
                             <div>
                                 <select name="file_dl">
                                 <optgroup label="Récent">
                                     <option value=null>Selectionner un fichier</option>
-                ';
+                        ';
                                 
-                                for ($i=0; $i<4; $i++)
+                                for ($i=0; $i<$count_recent; $i++)
                                 {
                                     echo '
                                     <option value ="'.array_keys($list_files["file_info"])[$i].'">'.array_keys($list_files["file_info"])[$i].'</option>';
@@ -114,7 +119,7 @@ session_destroy();
                                     
                                     foreach($list_files["file_info"] as $file_name => $file_value )
                                     {
-                                        if($file_value["created_year"] === $list_files["years"][$i-1] )
+                                        if($file_value["file_year"] === $list_files["years"][$i-1] )
                                         {
                                             echo '
                                                 <option value="'.$file_name.'">'.$file_name.'</option>
@@ -132,6 +137,14 @@ session_destroy();
                                 <button>Envoyer</button>
                             </div>
                         </form>
+                        ';
+                    }
+                    else
+                    {
+                        echo ' <p>Aucun fichier récent disponibles sur le serveur </p>';
+                    }
+                    
+                echo'
                     </div>
                 ';
 

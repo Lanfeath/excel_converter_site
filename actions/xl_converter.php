@@ -144,6 +144,8 @@ if(($_FILES)===array())
         /* ###  Get the value from the open file to put it in the new file */
     // initiate the variable $i to move between rows /!\ initiate at 2 (skip the first row)
     $i=2;
+    // separate variable $j for the GFI_final_temp file to always write in last line
+    $j=2;
 
     // get the current date + 90 days and show them all attached (Year-Month-Day): 20221004
     $day_date_90_plus = date("Ymd", strtotime("+90 days"));
@@ -168,16 +170,18 @@ if(($_FILES)===array())
         $cellValueG= intval(str_replace(array(".",","),"",strval($cellValueG)));
 
         // and write it on the other temp file
-        $final_spreadsheet->getActiveSheet()->setCellValue('A'.$i, "PAYMENT");
-        $final_spreadsheet->getActiveSheet()->setCellValue('B'.$i, $cellValueC);
-        $final_spreadsheet->getActiveSheet()->setCellValue('C'.$i, $cellValueG);
-        $final_spreadsheet->getActiveSheet()->setCellValue('D'.$i, 978);
-        $final_spreadsheet->getActiveSheet()->setCellValue('F'.$i, 0);
-        $final_spreadsheet->getActiveSheet()->setCellValue('H'.$i, $day_date_90_plus);
-        $final_spreadsheet->getActiveSheet()->setCellValue('K'.$i, true);
+        $final_spreadsheet->getActiveSheet()->setCellValue('A'.$j, "PAYMENT");
+        $final_spreadsheet->getActiveSheet()->setCellValue('B'.$j, $cellValueC);
+        $final_spreadsheet->getActiveSheet()->setCellValue('C'.$j, $cellValueG);
+        $final_spreadsheet->getActiveSheet()->setCellValue('D'.$j, 978);
+        $final_spreadsheet->getActiveSheet()->setCellValue('F'.$j, 0);
+        $final_spreadsheet->getActiveSheet()->setCellValue('H'.$j, $day_date_90_plus);
+        $final_spreadsheet->getActiveSheet()->setCellValue('K'.$j, true);
 
         // increment of the value $i and check if the next line is not empty
         $i+=1;
+        $j+=1;
+
         $is_not_empty= ($dl_spreadsheet->getActiveSheet()->getCell('B'.$i)->getValue()) !== Null;
     }
 
@@ -190,6 +194,9 @@ if(($_FILES)===array())
         exit;
     }
 
+    // know the year of the file: based on the reference number
+    $file_year= substr($final_spreadsheet->getActiveSheet()->getCell('B2')->getValue(),1,4);
+    
     // save the temp file in xlsx format
     $writer->save('../gfi_final_csv/temp_GFI-final.xlsx');
 
@@ -205,7 +212,7 @@ if(($_FILES)===array())
     \PhpOffice\PhpSpreadsheet\Shared\StringHelper::setDecimalSeparator('.');
     \PhpOffice\PhpSpreadsheet\Shared\StringHelper::setThousandsSeparator(" ' ");
     
-    $file_name="GFI_Final_".date("YmdHis").".csv";
+    $file_name="GFI_".$file_year."_cree_".date("ymdHis").".csv";
     $dir_name= ('../gfi_final_csv/');
 
     $writer->save($dir_name. $file_name);

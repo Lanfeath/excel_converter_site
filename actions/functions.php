@@ -25,19 +25,23 @@ function get_file_list($directory)
     $result["file_info"]=array();
     $result["years"]=array();
 
-
     foreach($scan_rep as $file)
     {
-        if (!is_file($directory."/".$file)) continue;
 
+        if (!is_file($directory."/".$file)) continue;
+            // the year of the file is contained in the name
+        $file_year= substr($file,4,4);
         $created_year = date("Y", filectime($directory."/".$file));
         $created_month = date("m", filectime($directory."/".$file));
+
         $result["file_info"][$file]= array(
+            "file_year" => $file_year,
             "created_year" =>$created_year,
             "created_month" =>$created_month,
         );
 
-        if(!in_array($created_year, $result["years"])) array_push($result["years"],$created_year);
+        // create a list of years 
+        if(!in_array($file_year, $result["years"])) array_push($result["years"],$file_year);
     }
 
     return $result;
